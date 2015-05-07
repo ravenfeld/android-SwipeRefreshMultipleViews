@@ -4,7 +4,7 @@ Android SwipeRefreshMultipleViews Sample
 A sample which shows how to use SwipeRefreshLayout to add the 'swipe-to-refresh'
 gesture to a layout with multiple children, enabling the ability to trigger a
 refresh from swiping down on the visible view. In this sample, SwipeRefreshLayout
-contains a scrollable GridView, along with a TextView empty view.
+contains two scrollable ListView, along with a TextView empty view.
 
 Pre-requisites
 --------------
@@ -19,8 +19,8 @@ Getting Started
 This sample uses the Gradle build system. To build this project, use the
 "gradlew build" command or use "Import Project" in Android Studio.
 
-Support
--------
+Initial support 
+---------------
 
 - Google+ Community: https://plus.google.com/communities/105153134372062985968
 - Stack Overflow: http://stackoverflow.com/questions/tagged/android
