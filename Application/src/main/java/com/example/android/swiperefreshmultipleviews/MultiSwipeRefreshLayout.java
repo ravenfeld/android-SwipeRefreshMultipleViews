@@ -17,9 +17,12 @@
 package com.example.android.swiperefreshmultipleviews;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 
@@ -63,19 +66,21 @@ public class MultiSwipeRefreshLayout extends SwipeRefreshLayout {
      * default, we need to manually iterate through our swipeable children to see if any are in a
      * state to trigger the gesture. If so we return false to start the gesture.
      */
-    @Override
-    public boolean canChildScrollUp() {
+    public boolean canChildScrollUp(int x, int y) {
         if (mSwipeableChildren != null && mSwipeableChildren.length > 0) {
             // Iterate through the scrollable children and check if any of them can not scroll up
             for (View view : mSwipeableChildren) {
-                if (view != null && view.isShown() && !canViewScrollUp(view)) {
+                if (view != null && view.isShown() && !canViewScrollUp(view) && inViewInBounds(view, x, y)) {
                     // If the view is shown, and can not scroll upwards, return false and start the
                     // gesture.
                     return false;
                 }
             }
+            return true;
+        } else {
+            return false;
         }
-        return true;
+
     }
     // END_INCLUDE(can_child_scroll_up)
 
@@ -104,4 +109,30 @@ public class MultiSwipeRefreshLayout extends SwipeRefreshLayout {
         }
     }
     // END_INCLUDE(can_view_scroll_up)
+
+    private boolean inViewInBounds(View view, int x, int y) {
+        Rect outRect = new Rect();
+        int[] location = new int[2];
+        view.getDrawingRect(outRect);
+        view.getLocationOnScreen(location);
+        outRect.offset(location[0], location[1]);
+        return outRect.contains(x, y);
+    }
+    // END_INCLUDE(can_view_scroll_up)
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (canChildScrollUp((int) ev.getRawX(), (int) ev.getRawY())) {
+            return false;
+        }
+        return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (canChildScrollUp((int) ev.getRawX(), (int) ev.getRawY())) {
+            return false;
+        }
+        return super.onTouchEvent(ev);
+    }
 }

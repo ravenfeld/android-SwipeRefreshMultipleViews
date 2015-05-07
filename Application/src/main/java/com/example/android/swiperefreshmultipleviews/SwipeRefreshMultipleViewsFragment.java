@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ListView;
 
 import java.util.List;
 
@@ -58,9 +59,13 @@ public class SwipeRefreshMultipleViewsFragment extends Fragment {
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
 
     /**
-     * The {@link android.widget.GridView} that displays the content that should be refreshed.
+     * The {@link android.widget.ListView} that displays the left content that should be refreshed.
      */
-    private GridView mGridView;
+    private ListView mListViewLeft;
+    /**
+     * The {@link android.widget.ListView} that displays the left content that should be refreshed.
+     */
+    private ListView mListViewRight;
 
     /**
      * The {@link android.widget.ListAdapter} used to populate the {@link android.widget.GridView}
@@ -97,12 +102,15 @@ public class SwipeRefreshMultipleViewsFragment extends Fragment {
                 R.color.swipe_color_3, R.color.swipe_color_4);
         // END_INCLUDE (change_colors)
 
-        // Retrieve the GridView
-        mGridView = (GridView) view.findViewById(android.R.id.list);
+        // Retrieve the ListView
+        mListViewLeft = (ListView) view.findViewById(R.id.list_left);
+        mListViewRight = (ListView) view.findViewById(R.id.list_right);
 
         // Retrieve the empty view
         mEmptyView = view.findViewById(android.R.id.empty);
 
+        mListViewLeft.setEmptyView(mEmptyView);
+        mListViewRight.setEmptyView(mEmptyView);
         return view;
     }
     // END_INCLUDE (inflate_view)
@@ -121,13 +129,14 @@ public class SwipeRefreshMultipleViewsFragment extends Fragment {
                 android.R.layout.simple_list_item_1,
                 android.R.id.text1);
 
-        // Set the adapter between the GridView and its backing data.
-        mGridView.setAdapter(mListAdapter);
+        // Set the adapter between the ListView and its backing data.
+        mListViewLeft.setAdapter(mListAdapter);
+        mListViewRight.setAdapter(mListAdapter);
 
         // BEGIN_INCLUDE (setup_swipeable_children)
         // Tell the MultiSwipeRefreshLayout which views are swipeable. In this case, the GridView
         // and empty view.
-        mSwipeRefreshLayout.setSwipeableChildren(android.R.id.list, android.R.id.empty);
+        mSwipeRefreshLayout.setSwipeableChildren(R.id.list_left, R.id.list_right, android.R.id.empty);
         // END_INCLUDE (setup_swipeable_children)
 
         // BEGIN_INCLUDE (setup_refreshlistener)
@@ -167,7 +176,6 @@ public class SwipeRefreshMultipleViewsFragment extends Fragment {
             case R.id.menu_clear:
                 Log.i(LOG_TAG, "Clear menu item selected");
                 mListAdapter.clear();
-                mEmptyView.setVisibility(View.VISIBLE);
                 return true;
 
             case R.id.menu_refresh:
@@ -216,8 +224,6 @@ public class SwipeRefreshMultipleViewsFragment extends Fragment {
         for (String cheese : result) {
             mListAdapter.add(cheese);
         }
-
-        mEmptyView.setVisibility(mListAdapter.isEmpty() ? View.VISIBLE : View.GONE);
 
         // Stop the refreshing indicator
         mSwipeRefreshLayout.setRefreshing(false);
